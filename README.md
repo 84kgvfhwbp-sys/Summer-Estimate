@@ -1,34 +1,76 @@
-# Summer Estimate
+# Summer Estimate — Mobile-First GitHub App
 
-A GitHub-ready, installable web app based on the approved spreadsheet-style Summer Estimate layout.
+A clean, installable web app that turns the original Summer Estimate spreadsheet formulas into a phone-friendly quote builder.
 
-## What it does
+## What changed in this version
 
-- Calculates each service automatically as numbers are entered
-- Shows live section totals and the total contract value
-- Saves estimates in the browser on the current device
-- Searches, reopens, duplicates, prints, and deletes saved estimates
-- Works on desktop, tablet, and phone
-- Can be installed as an app from a supported browser
-- Continues to open offline after the first successful visit
+- No horizontal scrolling
+- One vertical service screen at a time
+- Large touch-friendly toggles and inputs
+- Collapsed quote sections with live totals
+- Fixed total bar while editing
+- Home screen with recent estimates
+- Saved-estimate search, open, duplicate, and delete
+- Desktop layout and mobile layout from the same code
+- Local draft recovery
+- Installable PWA and offline app shell
+- Cloud-sync database structure prepared for a later connection
 
-## Put it on GitHub Pages
+## Quick visual preview
 
-1. Create a new GitHub repository.
+- Open `showcase.html` to see a completed example immediately.
+- Open `demo.html` for a standalone version that can be tested without a local server.
+- `preview.png` shows the actual rendered mobile screens.
+
+## Run it locally
+
+Because the app uses JavaScript modules, open it through a local web server rather than double-clicking `index.html`.
+
+From this folder:
+
+```bash
+python3 -m http.server 8080
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+## Publish on GitHub Pages
+
+1. Create or open the GitHub repository.
 2. Upload everything in this folder to the repository root.
 3. Commit the files to the `main` branch.
-4. Enable GitHub Pages for the `main` branch and root folder.
-5. Open the GitHub Pages address shown by GitHub.
+4. In the repository settings, enable GitHub Pages from the `main` branch and root folder.
+5. Open the Pages address GitHub provides.
 
-No build command or package installation is required. The app is a static website.
+No build command or package installation is required.
 
-## Important saving note
+## Install it like an app
 
-Version 1 stores saved estimates in that browser on that device. Publishing the app to GitHub does not automatically create a shared cloud database. Shared saving for Jess and Devlen can be added later without changing the calculator layout.
+After it is published through HTTPS, open it in the phone browser and use the browser’s **Add to Home Screen** option. It will open in a standalone app window.
 
-## Files
+## Saving today
 
-- `index.html` — complete calculator and user interface
-- `manifest.webmanifest` — installable-app settings
-- `service-worker.js` — offline app support
-- `assets/` — logo and app icons
+Saved estimates and the current draft use browser storage on the current device.
+
+## Shared website + app saving later
+
+See:
+
+- `docs/CLOUD_SYNC.md`
+- `supabase/schema.sql`
+
+The calculation engine is in `js/calculations.js`. The local saving boundary is in `js/store.js`, so cloud syncing can be connected without redesigning the app.
+
+## Main files
+
+- `index.html` — app entry point
+- `styles.css` — mobile and desktop layouts
+- `js/app.js` — screens and interactions
+- `js/calculations.js` — spreadsheet formula engine
+- `js/store.js` — saved estimates and draft storage
+- `manifest.webmanifest` — installable app settings
+- `service-worker.js` — offline app shell

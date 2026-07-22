@@ -1,0 +1,17 @@
+{
+  "app": "Summer Estimate Mobile-First GitHub App",
+  "verified_on": "2026-07-22",
+  "checks": {
+    "javascript_syntax": "passed",
+    "calculation_tests": "passed",
+    "empty_estimate_total": 0,
+    "sample_lawn_total": 4230,
+    "disabled_service_delivery_fee": "does not charge",
+    "mobile_overview_horizontal_overflow": false,
+    "mobile_lawn_horizontal_overflow": false,
+    "mobile_viewport_tested": "390x844 CSS pixels",
+    "pwa_manifest_present": true,
+    "service_worker_present": true,
+    "github_pages_relative_paths": true
+  }
+}
