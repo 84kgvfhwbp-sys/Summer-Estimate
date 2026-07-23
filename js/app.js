@@ -7,6 +7,7 @@ import {
   sectionSummaries,
 } from './calculations.js';
 import { localStore, makeId } from './store.js';
+import { cloud } from './cloud.js';
 
 const RATE_KEYS = [
   'fertSpringRate', 'fertSummerRate', 'fertFallRate',
@@ -27,6 +28,15 @@ const state = {
   savedSearch: '',
   current: restoreDraft(),
   lastSavedSnapshot: '',
+  authReady: false,
+  session: null,
+  localMode: localStore.getLocalMode(),
+  cloudEnabled: false,
+  cloudError: '',
+  savedItems: localStore.listCloudCache(),
+  company: null,
+  memberRole: null,
+  syncStatus: 'checking',
 };
 
 function restoreDraft() {
@@ -103,7 +113,43 @@ function headerSubtitle() {
   return state.route === 'home' ? 'Quote smarter' : '';
 }
 
+function renderLoading() {
+  return `<main class="auth-page"><section class="auth-card loading-card">
+    <img src="./assets/southeastern-logo.png" alt="" class="auth-logo" />
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <h1>Summer Estimate</h1><p>Checking your secure workspace…</p>
+  </section></main>`;
+}
+
+function renderAuth() {
+  return `<main class="auth-page">
+    <section class="auth-card">
+      <img src="./assets/southeastern-logo.png" alt="" class="auth-logo" />
+      <div class="auth-heading"><span class="auth-eyebrow">R2R Property Care</span><h1>Summer Estimate</h1><p>Sign in to access the same estimates from your computer and phone.</p></div>
+      <form id="sign-in-form" class="auth-form">
+        <div class="field"><label for="auth-email">Email</label><input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></div>
+        <div class="field"><label for="auth-password">Password</label><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="10" required placeholder="Your password" /></div>
+        <button class="primary-btn full-btn" type="submit">Sign In</button>
+      </form>
+      <button class="text-btn auth-link" data-action="magic-link">Email me a sign-in link</button>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="secondary-btn full-btn" data-action="continue-local">Continue in Local Mode</button>
+      <p class="auth-note">Local mode keeps estimates only on this device. Cloud mode shares them securely across devices.</p>
+      ${state.cloudError ? `<div class="auth-error">${safeText(state.cloudError)}</div>` : ''}
+    </section>
+  </main>`;
+}
+
 function render() {
+  if (!state.authReady) {
+    app.innerHTML = renderLoading();
+    return;
+  }
+  if (!state.session && !state.localMode) {
+    app.innerHTML = renderAuth();
+    return;
+  }
+
   const showBack = ['section', 'project'].includes(state.route);
   const canSave = ['estimate', 'section', 'project'].includes(state.route);
   app.innerHTML = `
@@ -150,9 +196,9 @@ function renderDesktopSidebar() {
             ${icon(iconName)} <span>${label}</span>
           </button>`).join('')}
       </nav>
-      <div class="desktop-sync">
-        <strong>Cloud-ready structure</strong>
-        Estimates save on this device now. The included Supabase setup connects the website and app later.
+      <div class="desktop-sync ${state.cloudEnabled ? 'connected' : ''}">
+        <strong>${state.cloudEnabled ? 'Cloud connected' : 'Local mode'}</strong>
+        ${state.cloudEnabled ? `Signed in as ${safeText(state.session?.user?.email || '')}. Estimates sync across your devices.` : 'Estimates are stored only on this device.'}
       </div>
     </aside>`;
 }
@@ -182,7 +228,8 @@ function renderRoute() {
 }
 
 function savedEstimates() {
-  return localStore.listEstimates().slice().sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+  const source = state.cloudEnabled ? state.savedItems : localStore.listEstimates();
+  return source.slice().sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
 }
 
 function renderHome() {
@@ -193,7 +240,7 @@ function renderHome() {
     <section class="hero-card">
       <div class="hero-eyebrow">Saved estimate value</div>
       <div class="hero-total">${formatMoney(savedTotal)}</div>
-      <div class="hero-sub">${items.length} saved estimate${items.length === 1 ? '' : 's'} on this device</div>
+      <div class="hero-sub">${items.length} saved estimate${items.length === 1 ? '' : 's'} ${state.cloudEnabled ? 'in your shared workspace' : 'on this device'}</div>
     </section>
     <button class="primary-btn full-btn" data-action="new-estimate">${icon('plus')} New Estimate</button>
     ${hasDraftData() ? `<button class="secondary-btn full-btn" style="margin-top:10px" data-route="estimate">Continue Current Estimate · ${formatMoney(calculateEstimate(state.current).grandTotal)}</button>` : ''}
@@ -214,7 +261,7 @@ function renderEstimateCard(item) {
     <div class="estimate-actions no-print">
       <button class="mini-btn" data-action="open-estimate" data-id="${safeText(item.id)}">Open</button>
       <button class="mini-btn" data-action="duplicate-saved" data-id="${safeText(item.id)}">Duplicate</button>
-      <button class="mini-btn delete" data-action="delete-saved" data-id="${safeText(item.id)}">Delete</button>
+      ${!state.cloudEnabled || ['owner', 'admin'].includes(state.memberRole) ? `<button class="mini-btn delete" data-action="delete-saved" data-id="${safeText(item.id)}">Delete</button>` : ''}
     </div>
   </article>`;
 }
@@ -462,7 +509,7 @@ function renderLitterSection() {
 function renderSaved() {
   const items = filterSaved();
   return `
-    <section class="page-title"><h1>Saved Estimates</h1><p>Open, duplicate or delete any completed calculator.</p></section>
+    <section class="page-title page-title-actions"><div><h1>Saved Estimates</h1><p>Open, duplicate or delete any completed calculator.</p></div>${state.cloudEnabled ? `<button class="secondary-btn compact-btn" data-action="refresh-cloud">Refresh</button>` : ''}</section>
     <div class="search-wrap">${icon('search')}<input type="search" data-search="saved" value="${safeText(state.savedSearch)}" placeholder="Search name or address" autocomplete="off" /></div>
     <div id="saved-list-container">${items.length ? `<div class="estimate-list">${items.map(renderEstimateCard).join('')}</div>` : renderEmpty(state.savedSearch ? 'No matches found' : 'No saved estimates', state.savedSearch ? 'Try another search.' : 'Save an estimate and it will appear here.')}</div>
   `;
@@ -476,8 +523,10 @@ function filterSaved() {
 function renderSettings() {
   const prefs = localStore.getPreferences();
   const currentDefaults = defaultEstimate(prefs);
+  const localCount = localStore.listEstimates().length;
+  const cloudLabel = state.syncStatus === 'saving' ? 'Saving…' : state.syncStatus === 'offline' ? 'Offline draft protected' : 'Up to date';
   return `
-    <section class="page-title"><h1>Settings</h1><p>Keep future estimates consistent and prepare for shared cloud saving.</p></section>
+    <section class="page-title"><h1>Settings</h1><p>Keep future estimates consistent and manage shared access.</p></section>
     <section class="card form-card">
       <div class="form-card-title"><div><h2>Default Crew Rates</h2><p>These rates are used when starting a new estimate.</p></div></div>
       <div class="field-grid two">
@@ -487,15 +536,19 @@ function renderSettings() {
       <button class="secondary-btn full-btn" data-action="use-current-rates" style="margin-top:14px">Use Current Estimate Rates as Defaults</button>
     </section>
     <section class="card form-card">
-      <div class="form-card-title"><div><h2>Cloud Sync</h2><p>Website and app sharing is prepared but not connected yet.</p></div></div>
-      <div class="sync-card">
+      <div class="form-card-title"><div><h2>Cloud Sync</h2><p>Website and installed app use the same secure workspace.</p></div></div>
+      <div class="sync-card ${state.cloudEnabled ? 'connected' : ''}">
         <div class="sync-icon">${icon('cloud')}</div>
-        <div><h3>Local mode</h3><p>Estimates currently save on this device. The repository includes a Supabase database schema and setup guide for shared access between your website and app.</p></div>
+        <div><h3>${state.cloudEnabled ? 'Connected' : 'Local mode'}</h3><p>${state.cloudEnabled ? `${safeText(state.company?.name || 'R2R Property Care')} · ${safeText(state.session?.user?.email || '')}<br>${safeText(cloudLabel)}` : 'Estimates currently save only on this device.'}</p></div>
       </div>
-      <div class="notice" style="margin-top:13px">Connecting cloud sync requires a Supabase project URL and public key. No passwords or private keys belong in GitHub.</div>
+      ${state.cloudEnabled ? `
+        ${localCount ? `<button class="secondary-btn full-btn" data-action="import-local" style="margin-top:14px">Import ${localCount} Local Estimate${localCount === 1 ? '' : 's'} to Cloud</button>` : ''}
+        <button class="danger-btn full-btn" data-action="sign-out" style="margin-top:10px">Sign Out</button>
+      ` : `<button class="primary-btn full-btn" data-action="show-sign-in" style="margin-top:14px">Sign In for Shared Saving</button>`}
+      ${state.cloudError ? `<div class="notice error" style="margin-top:13px">${safeText(state.cloudError)}</div>` : ''}
     </section>
     <section class="card form-card">
-      <div class="form-card-title"><div><h2>App Tools</h2><p>Useful while testing the layout.</p></div></div>
+      <div class="form-card-title"><div><h2>App Tools</h2><p>Useful while testing the calculator.</p></div></div>
       <div class="button-row stack-small">
         <button class="secondary-btn" data-action="load-example">Load Example</button>
         <button class="danger-btn" data-action="clear-draft">Clear Current Draft</button>
@@ -626,7 +679,7 @@ function generateEstimateNumber(items) {
   return `EST-${year}-${String(sequence).padStart(4, '0')}`;
 }
 
-function saveCurrent() {
+async function saveCurrent() {
   if (!state.current.estimateName.trim() && !state.current.siteAddress.trim()) {
     showToast('Add an estimate name or address before saving.');
     state.route = 'project';
@@ -644,13 +697,40 @@ function saveCurrent() {
   state.current.updatedAt = now;
   const total = calculateEstimate(state.current).grandTotal;
   const item = { ...clone(state.current), total };
+  localStore.saveDraft(state.current);
+
+  if (state.cloudEnabled) {
+    try {
+      state.syncStatus = 'saving';
+      showToast('Saving to cloud…');
+      const saved = await cloud.saveEstimate(state.company.id, item, total);
+      const existingIndex = state.savedItems.findIndex((entry) => entry.id === saved.id);
+      if (existingIndex >= 0) state.savedItems[existingIndex] = saved;
+      else state.savedItems.unshift(saved);
+      state.current = defaultEstimate(saved);
+      localStore.saveCloudCache(state.savedItems);
+      localStore.saveDraft(state.current);
+      state.syncStatus = 'saved';
+      state.cloudError = '';
+      state.lastSavedSnapshot = JSON.stringify(state.current);
+      showToast(`Saved ${state.current.estimateName || state.current.siteAddress} to cloud.`);
+      render();
+      return;
+    } catch (error) {
+      state.syncStatus = 'offline';
+      state.cloudError = error?.message || 'Cloud saving is temporarily unavailable.';
+      showToast('Cloud save failed. Your draft is safe on this device.');
+      render();
+      return;
+    }
+  }
+
   const existingIndex = items.findIndex((entry) => entry.id === item.id);
   if (existingIndex >= 0) items[existingIndex] = item;
   else items.unshift(item);
   localStore.saveEstimates(items);
-  localStore.saveDraft(state.current);
   state.lastSavedSnapshot = JSON.stringify(state.current);
-  showToast(`Saved ${state.current.estimateName || state.current.siteAddress}.`);
+  showToast(`Saved ${state.current.estimateName || state.current.siteAddress} on this device.`);
   refreshVisibleTotals();
 }
 
@@ -678,11 +758,24 @@ function duplicateEstimate(item = state.current) {
   showToast('Duplicate created. Save it when ready.');
 }
 
-function deleteSaved(id) {
+async function deleteSaved(id) {
   const items = savedEstimates();
   const item = items.find((entry) => entry.id === id);
   if (!item || !confirm(`Delete “${item.estimateName || item.siteAddress}”?`)) return;
-  localStore.saveEstimates(items.filter((entry) => entry.id !== id));
+  if (state.cloudEnabled) {
+    try {
+      await cloud.deleteEstimate(id);
+      state.savedItems = state.savedItems.filter((entry) => entry.id !== id);
+      localStore.saveCloudCache(state.savedItems);
+    } catch (error) {
+      state.cloudError = error?.message || 'Could not delete the estimate.';
+      showToast('Cloud delete failed.');
+      render();
+      return;
+    }
+  } else {
+    localStore.saveEstimates(items.filter((entry) => entry.id !== id));
+  }
   if (state.current.id === id) {
     state.current = newEstimateFromPreferences();
     localStore.saveDraft(state.current);
@@ -740,20 +833,191 @@ function loadExample() {
   showToast('Example estimate loaded.');
 }
 
-function savePreferenceField(element) {
+async function savePreferenceField(element) {
   const prefs = localStore.getPreferences();
   prefs[element.dataset.preference] = Number(element.value || 0);
   localStore.savePreferences(prefs);
-  showToast('Default rate saved.');
+  if (state.cloudEnabled) {
+    try {
+      await cloud.saveRateSettings(state.company.id, prefs);
+      showToast('Shared default rate saved.');
+      return;
+    } catch (error) {
+      state.cloudError = error?.message || 'Could not update shared rates.';
+    }
+  }
+  showToast('Default rate saved on this device.');
 }
 
-function useCurrentRatesAsDefaults() {
+async function useCurrentRatesAsDefaults() {
   const prefs = localStore.getPreferences();
   RATE_KEYS.forEach((key) => { prefs[key] = state.current[key]; });
   prefs.onePersonRate = CREW_RATES.one;
   prefs.twoPersonRate = state.current.crewType === 'two' ? Number(state.current.crewRate) : CREW_RATES.two;
   localStore.savePreferences(prefs);
-  showToast('Current rates saved as defaults.');
+  if (state.cloudEnabled) {
+    try {
+      await cloud.saveRateSettings(state.company.id, prefs);
+      showToast('Current rates saved as shared defaults.');
+      return;
+    } catch (error) {
+      state.cloudError = error?.message || 'Could not update shared defaults.';
+    }
+  }
+  showToast('Current rates saved as local defaults.');
+}
+
+async function loadCloudWorkspace() {
+  state.syncStatus = 'checking';
+  state.cloudError = '';
+  try {
+    const workspace = await cloud.bootstrapWorkspace();
+    state.company = workspace.company;
+    state.memberRole = workspace.role;
+    state.savedItems = await cloud.listEstimates(workspace.company.id);
+    localStore.saveCloudCache(state.savedItems);
+    const sharedPrefs = await cloud.loadRateSettings(workspace.company.id);
+    if (sharedPrefs && Object.keys(sharedPrefs).length) localStore.savePreferences(sharedPrefs);
+    state.cloudEnabled = true;
+    state.localMode = false;
+    localStore.setLocalMode(false);
+    state.syncStatus = 'saved';
+  } catch (error) {
+    state.cloudError = error?.message || 'Could not load the shared workspace.';
+    state.savedItems = localStore.listCloudCache();
+    state.cloudEnabled = Boolean(state.session);
+    state.syncStatus = 'offline';
+  }
+}
+
+async function handleSignIn(form) {
+  const data = new FormData(form);
+  const email = String(data.get('email') || '').trim();
+  const password = String(data.get('password') || '');
+  state.cloudError = '';
+  try {
+    const session = await cloud.signIn(email, password);
+    state.session = session;
+    await loadCloudWorkspace();
+    state.authReady = true;
+    render();
+    showToast('Signed in.');
+  } catch (error) {
+    state.cloudError = error?.message || 'Could not sign in.';
+    state.authReady = true;
+    render();
+  }
+}
+
+async function sendMagicLink() {
+  const emailInput = document.getElementById('auth-email');
+  const email = String(emailInput?.value || '').trim();
+  if (!email) {
+    state.cloudError = 'Enter your email address first.';
+    render();
+    return;
+  }
+  try {
+    await cloud.sendMagicLink(email);
+    state.cloudError = '';
+    showToast('Sign-in link sent. Check your email.');
+  } catch (error) {
+    state.cloudError = error?.message || 'Could not send a sign-in link.';
+    render();
+  }
+}
+
+async function signOut() {
+  try {
+    await cloud.signOut();
+  } catch (error) {
+    state.cloudError = error?.message || 'Could not sign out cleanly.';
+  }
+  state.session = null;
+  state.cloudEnabled = false;
+  state.company = null;
+  state.memberRole = null;
+  state.localMode = false;
+  localStore.setLocalMode(false);
+  state.route = 'home';
+  render();
+}
+
+async function refreshCloudEstimates() {
+  if (!state.cloudEnabled || !state.company?.id) return;
+  try {
+    state.syncStatus = 'checking';
+    state.savedItems = await cloud.listEstimates(state.company.id);
+    localStore.saveCloudCache(state.savedItems);
+    state.syncStatus = 'saved';
+    state.cloudError = '';
+    render();
+    showToast('Cloud estimates refreshed.');
+  } catch (error) {
+    state.syncStatus = 'offline';
+    state.cloudError = error?.message || 'Could not refresh cloud estimates.';
+    render();
+  }
+}
+
+async function importLocalEstimates() {
+  if (!state.cloudEnabled) return;
+  const localItems = localStore.listEstimates();
+  if (!localItems.length) {
+    showToast('No local estimates to import.');
+    return;
+  }
+  let imported = 0;
+  try {
+    for (const localItem of localItems) {
+      const item = { ...clone(localItem) };
+      if (!item.id) item.id = makeId();
+      if (!item.estimateNumber) item.estimateNumber = generateEstimateNumber([...state.savedItems, ...localItems]);
+      const total = Number(item.total ?? calculateEstimate(item).grandTotal);
+      const saved = await cloud.saveEstimate(state.company.id, item, total);
+      const index = state.savedItems.findIndex((entry) => entry.id === saved.id);
+      if (index >= 0) state.savedItems[index] = saved;
+      else state.savedItems.unshift(saved);
+      imported += 1;
+    }
+    localStore.saveCloudCache(state.savedItems);
+    localStore.saveEstimates([]);
+    render();
+    showToast(`Imported ${imported} estimate${imported === 1 ? '' : 's'} to cloud.`);
+  } catch (error) {
+    state.cloudError = error?.message || 'The import did not finish.';
+    render();
+    showToast(`Imported ${imported} before an error occurred.`);
+  }
+}
+
+async function initApp() {
+  render();
+  try {
+    state.session = await cloud.init();
+    if (state.session) await loadCloudWorkspace();
+    await cloud.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session && session.access_token !== state.session?.access_token) {
+        state.session = session;
+        await loadCloudWorkspace();
+        state.authReady = true;
+        render();
+      }
+      if (event === 'SIGNED_OUT') {
+        state.session = null;
+        state.cloudEnabled = false;
+        state.company = null;
+        state.memberRole = null;
+        state.authReady = true;
+        render();
+      }
+    });
+  } catch (error) {
+    state.cloudError = error?.message || 'Cloud connection is unavailable. You can continue locally.';
+    state.cloudEnabled = false;
+  }
+  state.authReady = true;
+  render();
 }
 
 function printEstimate() {
@@ -766,6 +1030,13 @@ function printEstimate() {
     window.print();
   }
 }
+
+app.addEventListener('submit', (event) => {
+  if (event.target.matches('#sign-in-form')) {
+    event.preventDefault();
+    handleSignIn(event.target);
+  }
+});
 
 app.addEventListener('input', (event) => {
   const element = event.target;
@@ -801,6 +1072,21 @@ app.addEventListener('click', (event) => {
   if (!actionButton) return;
   const action = actionButton.dataset.action;
   if (action === 'new-estimate') startNewEstimate();
+  if (action === 'continue-local') {
+    state.localMode = true;
+    state.cloudEnabled = false;
+    localStore.setLocalMode(true);
+    render();
+  }
+  if (action === 'show-sign-in') {
+    state.localMode = false;
+    localStore.setLocalMode(false);
+    render();
+  }
+  if (action === 'magic-link') sendMagicLink();
+  if (action === 'sign-out') signOut();
+  if (action === 'import-local') importLocalEstimates();
+  if (action === 'refresh-cloud') refreshCloudEstimates();
   if (action === 'go-saved') setRoute('saved');
   if (action === 'back-to-estimate') setRoute('estimate');
   if (action === 'edit-project') setRoute('project');
@@ -843,7 +1129,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   });
 }
 
-render();
+initApp();
 
 // Exposed for quick automated verification in a browser console.
 window.SummerEstimateApp = {

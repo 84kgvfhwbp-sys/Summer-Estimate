@@ -1,37 +1,33 @@
-# Shared Cloud Sync — Prepared Next Step
+# Summer Estimate Cloud Sync
 
-The app currently works fully in local mode. Estimates are saved in the browser on the device being used.
+This release connects the responsive GitHub Pages app to Supabase.
 
-The repository includes `supabase/schema.sql` so the app can later use one shared estimate library on the website, iPhone, iPad, and computer.
+## Connected project
 
-## What will change when cloud sync is connected
+- Project URL: `https://jjijzazcntunmvqpvvfz.supabase.co`
+- Frontend key type: Supabase publishable key
+- Shared workspace: `R2R Property Care`
 
-- Jess and Devlen sign in to the same company workspace.
-- Both devices load the same saved estimates.
-- A change made on one device is available on the other.
-- The calculator formulas remain in the app; the database stores the entered values and calculated total.
-- Local draft saving can remain as an offline safety net.
+The publishable key in `js/config.js` is intended for browser apps. Database access is controlled by Supabase Auth and Row Level Security. Never add a secret key, service-role key, database password, or connection string to this repository.
 
-## Information needed to connect it
+## What syncs
 
-1. A Supabase project.
-2. The project URL.
-3. The public anonymous key.
-4. User accounts for the people who need access.
-5. One company record and membership records connecting those users to the company.
+- Saved estimates
+- Estimate totals and all calculator inputs
+- Estimate names, numbers, addresses, seasons and prepared-by values
+- Shared default rates
+- Estimate history in the database
 
-Do not commit a Supabase service-role key or any other private administrative key to GitHub.
+The current working draft remains stored locally so work is protected if the connection drops.
 
-## Planned code connection
+## First account
 
-The current `js/store.js` is the storage boundary. It can be replaced with a cloud-backed store without changing the calculation engine or mobile layout.
+Create the first user in Supabase Authentication, then sign in through the app. The first authenticated user automatically creates the R2R Property Care workspace and becomes its owner.
 
-The cloud store will implement the same basic actions:
+## Existing local estimates
 
-- list estimates
-- save an estimate
-- update an estimate
-- delete an estimate
-- load/save the current local draft
+After signing in, open Settings and choose **Import Local Estimates to Cloud**. The app uploads the browser-saved estimates and then clears the old local saved-estimate list. The current draft remains local.
 
-This is intentionally separated so the visual app does not need to be rebuilt when syncing is added.
+## Future member access
+
+Additional users must be created or invited through Supabase Authentication and then added to `public.company_members`. A company-member management screen can be added in a later release.
