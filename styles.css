@@ -792,3 +792,18 @@ input:focus, select:focus {
   .page-title-actions { align-items: flex-start; }
   .compact-btn { min-height: 38px; padding: 8px 12px; }
 }
+
+
+@media (min-width: 900px) {
+  .desktop-sync.connected {
+    color: #456052;
+    background: #eef8f1;
+    border-color: #9bc9a8;
+    box-shadow: 0 8px 22px rgba(4, 45, 25, 0.16);
+    overflow-wrap: anywhere;
+  }
+
+  .desktop-sync.connected strong {
+    color: #0f5a35;
+  }
+}
