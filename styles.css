@@ -728,3 +728,67 @@ input:focus, select:focus {
   margin-right: 7px;
   vertical-align: -4px;
 }
+
+/* Cloud authentication and sync */
+.auth-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(187, 221, 196, .48), transparent 38%),
+    linear-gradient(180deg, #f7faf6 0%, #eef5ee 100%);
+}
+
+.auth-card {
+  width: min(100%, 460px);
+  background: rgba(255, 255, 255, .96);
+  border: 1px solid #dbe6dc;
+  border-radius: 26px;
+  box-shadow: 0 24px 70px rgba(21, 70, 43, .13);
+  padding: clamp(24px, 5vw, 38px);
+}
+
+.auth-logo {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 18px;
+  border-radius: 20px;
+}
+
+.auth-heading { text-align: center; margin-bottom: 24px; }
+.auth-heading h1 { margin: 5px 0 8px; color: #103d29; font-size: clamp(30px, 7vw, 40px); }
+.auth-heading p { margin: 0; color: #66746b; line-height: 1.55; }
+.auth-eyebrow { color: #267348; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.auth-form { display: grid; gap: 14px; }
+.auth-link { width: 100%; margin-top: 15px; text-align: center; justify-content: center; }
+.auth-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: #93a097; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #e0e8e1; }
+.auth-note { color: #78847c; font-size: 12px; line-height: 1.5; text-align: center; margin: 14px 0 0; }
+.auth-error { margin-top: 16px; padding: 12px 14px; background: #fff2f0; border: 1px solid #f1c8c2; border-radius: 13px; color: #943b31; font-size: 13px; line-height: 1.45; }
+.loading-card { text-align: center; }
+.loading-card h1 { margin: 12px 0 6px; color: #103d29; }
+.loading-card p { color: #66746b; }
+.loading-spinner { width: 34px; height: 34px; margin: 8px auto 18px; border: 3px solid #dce9df; border-top-color: #1f7447; border-radius: 50%; animation: spin .85s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.desktop-sync.connected,
+.sync-card.connected {
+  border-color: #a8d2b5;
+  background: #eef8f1;
+}
+
+.notice.error { border-color: #efc6c0; background: #fff3f1; color: #8a3a31; }
+
+@media (max-width: 520px) {
+  .auth-page { padding: 14px; align-items: stretch; }
+  .auth-card { margin: auto 0; border-radius: 22px; padding: 24px 18px; }
+}
+.page-title-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.compact-btn { width: auto; min-height: 42px; padding: 9px 15px; flex: 0 0 auto; }
+@media (max-width: 520px) {
+  .page-title-actions { align-items: flex-start; }
+  .compact-btn { min-height: 38px; padding: 8px 12px; }
+}
