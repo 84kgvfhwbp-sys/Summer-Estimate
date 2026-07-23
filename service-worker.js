@@ -1,4 +1,4 @@
-const CACHE_NAME = 'summer-estimate-cloud-v1';
+const CACHE_NAME = 'summer-estimate-cloud-v2';
 const APP_SHELL = [
   './',
   './index.html',

@@ -3,20 +3,76 @@ import { COMPANY_NAME, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from './config.j
 let clientPromise = null;
 let authSubscription = null;
 
+function loadScript(source) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[data-supabase-source="${source}"]`);
+    if (existing) {
+      if (globalThis.supabase?.createClient) resolve();
+      else existing.addEventListener('load', resolve, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = source;
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.dataset.supabaseSource = source;
+
+    const timeout = setTimeout(() => {
+      script.remove();
+      reject(new Error(`Timed out loading ${source}`));
+    }, 15000);
+
+    script.addEventListener('load', () => {
+      clearTimeout(timeout);
+      resolve();
+    }, { once: true });
+
+    script.addEventListener('error', () => {
+      clearTimeout(timeout);
+      script.remove();
+      reject(new Error(`Could not load ${source}`));
+    }, { once: true });
+
+    document.head.appendChild(script);
+  });
+}
+
+async function loadSupabaseLibrary() {
+  if (globalThis.supabase?.createClient) return globalThis.supabase;
+
+  const sources = [
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+    'https://unpkg.com/@supabase/supabase-js@2',
+  ];
+
+  const failures = [];
+  for (const source of sources) {
+    try {
+      await loadScript(source);
+      if (globalThis.supabase?.createClient) return globalThis.supabase;
+      failures.push(`${source}: library loaded without createClient`);
+    } catch (error) {
+      failures.push(`${source}: ${error?.message || 'unknown error'}`);
+    }
+  }
+
+  throw new Error(`Cloud library could not load. ${failures.join(' | ')}`);
+}
+
 async function getClient() {
   if (!clientPromise) {
-    const modulePromise = import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Cloud connection timed out.')), 10000);
-    });
-    clientPromise = Promise.race([modulePromise, timeoutPromise])
-      .then(({ createClient }) => createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    clientPromise = loadSupabaseLibrary().then(({ createClient }) => createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: true,
         },
-      }));
+      },
+    ));
   }
   return clientPromise;
 }
