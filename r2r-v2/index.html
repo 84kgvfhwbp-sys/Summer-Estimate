@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0e0a">
+<title>R2R Property Care — Interactive Website Concept V2</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="#home" aria-label="R2R Property Care home"><b>R<span>2</span>R</b><small>Property Care</small></a>
+  <nav><a href="#services">Services</a><a href="#work">Our Work</a><a href="#about">About</a><a href="#faq">FAQ</a></nav>
+  <button class="btn yellow desktop-cta" data-estimate>Request an estimate <i>→</i></button>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i></i><i></i><i></i></button>
+</header>
+<div class="menu" id="menu">
+  <div><a class="logo light" href="#home"><b>R<span>2</span>R</b><small>Property Care</small></a><button class="close" id="menuClose">×</button></div>
+  <nav><a href="#services">Services <small>01</small></a><a href="#work">Our Work <small>02</small></a><a href="#about">About R2R <small>03</small></a><a href="#faq">FAQ <small>04</small></a></nav>
+  <button class="btn yellow" data-estimate>Request an estimate <i>→</i></button>
+</div>
+<main>
+<section class="hero" id="home" data-season="summer">
+  <div class="hero-bg"></div><div class="shade"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <p class="overline" id="heroOverline">R2R Property Care · New Brunswick</p>
+      <h1>Property care.<em id="heroAccent">Built for every season.</em></h1>
+      <p class="intro" id="heroText">Professional landscape, property maintenance, snow and ice management for commercial and residential properties across New Brunswick.</p>
+      <div class="actions"><button class="btn yellow" data-estimate>Request an estimate <i>→</i></button><a class="btn ghost" href="#services">Explore services <i>↓</i></a></div>
+      <p class="areas">Moncton <i></i> Dieppe <i></i> Riverview <i></i> Shediac <i></i> Fredericton</p>
+    </div>
+    <aside><span>One company.</span><strong>12 months.</strong><p>One accountable property-care partner through every season.</p><div><b>$5M<small>Liability coverage</small></b><b>NB<small>Locally operated</small></b></div></aside>
+  </div>
+</section>
+<section class="season-strip">
+  <div class="wrap season-inner"><div><small>Explore by season</small><h2>One partner. All year.</h2></div><div class="seasons">
+    <button class="season active" data-season-btn="summer"><span class="thumb summer"></span><b>Summer<small>Landscape & property care</small></b></button>
+    <button class="season" data-season-btn="winter"><span class="thumb winter"></span><b>Winter<small>Snow & ice management</small></b></button>
+  </div></div>
+</section>
+<section class="trust">
+  <div class="wrap trust-layout"><div class="section-copy"><p class="overline">Built for long-term property care</p><h2>Trusted across New Brunswick.</h2><p>Commercial capability, local accountability and year-round service—all under one roof.</p></div>
+  <div class="stats"><article><i>✓</i><b>$5M</b><span>Commercial liability coverage</span></article><article><i>↻</i><b>Year-round</b><span>One property-care partner</span></article><article><i>◆</i><b>Commercial + residential</b><span>Plans shaped to the property</span></article><article><i>⌖</i><b>New Brunswick</b><span>Locally owned and operated</span></article></div></div>
+</section>
+<section class="services" id="services">
+  <div class="wrap"><div class="heading"><div><p class="overline">What we do</p><h2>Complete property care.<br>Every season.</h2></div><p>Choose a season, then tap any service to preview its dedicated page.</p></div>
+  <div class="filters"><button class="active" data-filter="all">All services</button><button data-filter="summer">Summer</button><button data-filter="winter">Winter</button></div>
+  <div class="service-grid">
+    <button class="card" data-type="summer" data-title="Commercial Grounds Maintenance" data-kicker="Summer service" data-img="lawn" data-copy="A consistent maintenance program built around the way your property is used, presented and managed throughout the growing season." data-list="Scheduled mowing and trimming|Garden and landscape detailing|Seasonal cleanup support|Clear service communication"><span class="photo lawn"></span><span class="arrow">↗</span><div><small>Summer service</small><b>Commercial Grounds Maintenance</b><p>Consistent care for professional properties.</p></div></button>
+    <button class="card" data-type="summer" data-title="Turf Management" data-kicker="Summer service" data-img="school" data-copy="Professional turf care supporting healthier growth, cleaner presentation and dependable upkeep across the season." data-list="Professional mowing and striping|Aeration and overseeding|Topsoil and seed repairs|Sod installation"><span class="photo school"></span><span class="arrow">↗</span><div><small>Summer service</small><b>Turf Management</b><p>Healthy turf and dependable upkeep.</p></div></button>
+    <button class="card" data-type="summer" data-title="Landscape Projects & Improvements" data-kicker="Project service" data-img="walk" data-copy="Practical landscape improvements planned around access, presentation, function and lasting value." data-list="Walkway and hardscape installation|Site preparation and grading|Topsoil, sod and seed work|Finished-property detailing"><span class="photo walk"></span><span class="arrow">↗</span><div><small>Project service</small><b>Landscape Projects & Improvements</b><p>Useful upgrades, done properly.</p></div></button>
+    <button class="card" data-type="winter" data-title="Commercial Snow Removal" data-kicker="Winter service" data-img="snow" data-copy="Equipment-backed snow clearing planned around site access, traffic flow and dependable storm response." data-list="Parking-lot plowing|Storm monitoring and dispatch|Site-specific push plans|Snow hauling when required"><span class="photo snow"></span><span class="arrow">↗</span><div><small>Winter service</small><b>Commercial Snow Removal</b><p>Reliable plowing for demanding properties.</p></div></button>
+    <button class="card" data-type="winter" data-title="Sidewalk Snow Clearing" data-kicker="Winter service" data-img="snow2" data-copy="Dedicated crews and compact equipment for entrances, walkways, stairs and pedestrian routes." data-list="Walkways and building entrances|Stairs and pedestrian routes|Blowers and compact equipment|Coordinated service routes"><span class="photo snow2"></span><span class="arrow">↗</span><div><small>Winter service</small><b>Sidewalk Snow Clearing</b><p>Focused care for pedestrian access.</p></div></button>
+    <button class="card" data-type="winter" data-title="Ice Management" data-kicker="Winter service" data-img="ice" data-copy="Planned salting and sanding focused on safer access, parking areas and continued property operations." data-list="Parking-lot de-icing|Salting and sanding|Weather-based monitoring|Application documentation"><span class="photo ice"></span><span class="arrow">↗</span><div><small>Winter service</small><b>Ice Management</b><p>Responsive treatment for changing conditions.</p></div></button>
+  </div></div>
+</section>
+<section class="work" id="work"><div class="wrap"><div class="heading dark-text"><div><p class="overline">Featured work</p><h2>Real work.<br>Real results.</h2></div><p>Every project becomes a clear story showing the scope, process and finished result.</p></div>
+  <div class="projects">
+    <button data-title="School Property Care" data-kicker="Grounds maintenance · Fredericton area" data-img="school" data-copy="A recurring property-maintenance story showing consistency, equipment capacity and the visible standard of the finished work." data-list="Recurring grounds maintenance|Professional turf presentation|Seasonal property care|Documented project photography"><span class="photo school"></span><i>01</i><div><small>Grounds maintenance</small><b>School Property Care</b><p>Recurring care presented as a credible case study.</p></div></button>
+    <button data-title="Commercial Walkway Installation" data-kicker="Property improvement · Moncton area" data-img="walk" data-copy="A before-to-finished project story focused on preparation, access, clean installation and final presentation." data-list="Site preparation|Walkway installation|Access improvement|Finished-property detailing"><span class="photo walk"></span><i>02</i><div><small>Property improvement</small><b>Walkway Installation</b><p>Scope, process and result in one clear story.</p></div></button>
+    <button data-title="Commercial Turf Care" data-kicker="Turf management · New Brunswick" data-img="lawn" data-copy="A visual case study showing the impact of scheduled turf care, professional striping and consistent detail work." data-list="Scheduled turf care|Professional striping|Detail trimming|Ongoing presentation"><span class="photo lawn"></span><i>03</i><div><small>Turf management</small><b>Commercial Turf Care</b><p>Strong visual proof of the R2R standard.</p></div></button>
+  </div></div>
+</section>
+<section class="equipment"><div class="wrap equipment-layout"><div class="section-copy"><p class="overline">Built for the work</p><h2>Professional equipment. Experienced crews.</h2><p>R2R is built to care for real properties in real conditions—with the equipment, planning and people to follow through.</p><ul><li>Commercial-capable fleet</li><li>Experienced operators</li><li>Documented service</li><li>Year-round readiness</li></ul></div>
+  <div class="equipment-stage"><span class="equipment-photo snow" id="equipmentPhoto"></span><div class="equipment-info"><small id="equipmentType">Wheel loader</small><b id="equipmentName">Hitachi ZW150</b><p id="equipmentUse">High-capacity snow operations</p></div><div class="equipment-tabs"><button class="active" data-equipment="loader">01</button><button data-equipment="tractor">02</button><button data-equipment="truck">03</button></div></div>
+</div></section>
+<section class="about" id="about"><div class="wrap about-layout"><div class="about-photo"></div><div class="section-copy"><p class="overline">About R2R</p><h2>Local. Capable. Accountable.</h2><p class="lead">Personal accountability with the systems, equipment and capacity needed to care for properties year-round.</p><p>The full About page would introduce Jessica and Devlen, explain how R2R grew, and connect that story to reliable communication, consistent service and responsibility for the result.</p><div class="checks"><span>✓ Reliable communication</span><span>✓ Professional equipment</span><span>✓ Experienced operators</span><span>✓ Long-term partnerships</span></div><button class="story" id="story">Explore the R2R story →</button></div></div></section>
+<section class="faq" id="faq"><div class="wrap faq-layout"><div class="section-copy"><p class="overline">Frequently asked</p><h2>Clear answers.<br>No guesswork.</h2><p>A focused FAQ helps clients understand service areas, property types and the estimate process.</p></div><div class="faq-list">
+  <article class="open"><button>What areas does R2R serve?<i>+</i></button><div><p>Greater Moncton and other New Brunswick service areas, including Moncton, Dieppe, Riverview, Shediac and Fredericton-area work.</p></div></article>
+  <article><button>Do you work with commercial and residential properties?<i>+</i></button><div><p>Yes. The site can guide commercial, multi-residential, institutional and residential clients into the right service path.</p></div></article>
+  <article><button>Can R2R care for a property year-round?<i>+</i></button><div><p>Yes—one accountable partner for summer landscape care and winter snow and ice management.</p></div></article>
+  <article><button>How will estimate requests work?<i>+</i></button><div><p>The first release can connect to your current workflow and later route requests into Ground Control OS.</p></div></article>
+</div></div></section>
+<section class="cta"><div class="wrap"><div><small>Ready to get started?</small><h2>Let’s talk about your property.</h2></div><button class="btn black" data-estimate>Request an estimate <i>→</i></button></div></section>
+</main>
+<footer><div class="wrap footer-grid"><div><a class="logo light" href="#home"><b>R<span>2</span>R</b><small>Property Care</small></a><p>Professional landscape, property maintenance, snow and ice management across New Brunswick.</p></div><div><b>Services</b><a href="#services">Landscape & property care</a><a href="#services">Snow & ice management</a><a href="#work">Projects & improvements</a></div><div><b>Contact</b><a href="tel:+15068741906">506-874-1906</a><a href="mailto:jessica@r2rpropertycare.com">jessica@r2rpropertycare.com</a><span>New Brunswick, Canada</span></div></div><div class="wrap copyright">© 2026 R2R Property Care <span>Interactive website concept · V2</span></div></footer>
+<div class="modal" id="detail"><button class="backdrop" data-close></button><aside><button class="close" data-close>×</button><span class="detail-photo lawn" id="detailPhoto"></span><div class="detail-copy"><small id="detailKicker"></small><h2 id="detailTitle"></h2><p id="detailText"></p><ul id="detailList"></ul><button class="btn yellow" id="detailEstimate">Request an estimate <i>→</i></button></div></aside></div>
+<div class="modal" id="estimate"><button class="backdrop" data-close-estimate></button><aside class="estimate-panel"><button class="close" data-close-estimate>×</button><div class="estimate-head"><p class="overline">Estimate experience</p><h2>Tell us about your property.</h2><p>Prototype only—this form does not send or save information.</p></div><form id="estimateForm"><label>Name<input required></label><label>Company<input></label><label>Email<input type="email" required></label><label>Phone<input type="tel"></label><label>Property type<select><option>Commercial</option><option>Multi-residential</option><option>Institutional</option><option>Residential</option></select></label><label>Service needed<select><option>Landscape & property care</option><option>Snow & ice management</option><option>Project or installation</option></select></label><label class="full">Property details<textarea rows="5" placeholder="Address, scope and timing"></textarea></label><button class="btn yellow full">Preview submission <i>→</i></button></form><div class="success" id="success" hidden><i>✓</i><h3>Request preview complete.</h3><p>On the live website, this would enter your estimate workflow and send the client a confirmation.</p><button class="btn black" data-close-estimate>Close preview</button></div></aside></div>
+<script src="app.js"></script>
+</body></html>
