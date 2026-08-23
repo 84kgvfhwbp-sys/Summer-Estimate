@@ -1,0 +1,117 @@
+<section class="services section section--dark" id="services" aria-labelledby="servicesTitle">
+      <div class="shell">
+        <div class="section-heading section-heading--split section-heading--light">
+          <div>
+            <p class="eyebrow">Our core services</p>
+            <h2 id="servicesTitle">Professional care. Clear choices.</h2>
+          </div>
+          <p>Use the filters, then tap a service to open a complete page preview with scope, ideal property types and a direct estimate path.</p>
+        </div>
+
+        <div class="filter-row" role="group" aria-label="Filter services">
+          <button class="active" type="button" data-filter="all">All services</button>
+          <button type="button" data-filter="commercial">Commercial</button>
+          <button type="button" data-filter="residential">Residential</button>
+          <button type="button" data-filter="winter">Winter</button>
+        </div>
+
+        <div class="service-grid" id="serviceGrid">
+          <button class="service-card" type="button" data-category="commercial summer" data-service="Commercial Grounds Maintenance" data-kicker="Commercial · Summer" data-image="lawn" data-copy="A planned property-maintenance program built around presentation, access, consistency and the needs of the site." data-list="Scheduled mowing and trimming|Garden and landscape detailing|Seasonal cleanups|Site notes and clear communication">
+            <span class="service-card__image image--lawn"></span>
+            <span class="service-card__icon">▦</span>
+            <span class="service-card__body"><small>Commercial · Summer</small><strong>Commercial Grounds Maintenance</strong><p>Consistent exterior care for professional properties.</p><em>Learn more →</em></span>
+          </button>
+
+          <button class="service-card" type="button" data-category="commercial residential summer" data-service="Turf & Landscape Maintenance" data-kicker="Commercial + Residential · Summer" data-image="school" data-copy="Professional turf and landscape care supporting healthier growth, cleaner presentation and dependable upkeep." data-list="Professional mowing and striping|Aeration and overseeding|Topsoil and seed repairs|Garden and shrub maintenance">
+            <span class="service-card__image image--school"></span>
+            <span class="service-card__icon">⌁</span>
+            <span class="service-card__body"><small>Commercial + Residential</small><strong>Turf & Landscape Maintenance</strong><p>Healthy turf, sharp edges and detailed upkeep.</p><em>Learn more →</em></span>
+          </button>
+
+          <button class="service-card" type="button" data-category="commercial residential summer" data-service="Landscape Projects & Improvements" data-kicker="Project Service · Summer" data-image="walk" data-copy="Practical improvements designed around access, presentation, drainage, function and lasting value." data-list="Walkways and hardscape installation|Site preparation and grading|Topsoil, sod and seed work|Garden and landscape renovations">
+            <span class="service-card__image image--walk"></span>
+            <span class="service-card__icon">◇</span>
+            <span class="service-card__body"><small>Project Service</small><strong>Landscape Projects & Improvements</strong><p>Useful property upgrades, planned and finished properly.</p><em>Learn more →</em></span>
+          </button>
+
+          <button class="service-card" type="button" data-category="commercial winter" data-service="Commercial Snow Removal" data-kicker="Commercial · Winter" data-image="winter" data-copy="Equipment-backed snow clearing planned around site access, traffic flow, service routes and dependable storm response." data-list="Parking-lot plowing|Storm monitoring and dispatch|Site-specific push plans|Snow relocation and hauling when required">
+            <span class="service-card__image image--winter"></span>
+            <span class="service-card__icon">✣</span>
+            <span class="service-card__body"><small>Commercial · Winter</small><strong>Commercial Snow Removal</strong><p>Reliable plowing for demanding properties.</p><em>Learn more →</em></span>
+          </button>
+
+          <button class="service-card" type="button" data-category="commercial winter" data-service="Sidewalk Snow Clearing" data-kicker="Commercial · Winter" data-image="snowwalk" data-copy="Dedicated crews and compact equipment focused on entrances, walkways, stairs and pedestrian routes." data-list="Walkways and building entrances|Stairs and pedestrian routes|Blowers and compact equipment|Coordinated route service">
+            <span class="service-card__image image--snowwalk"></span>
+            <span class="service-card__icon">♧</span>
+            <span class="service-card__body"><small>Commercial · Winter</small><strong>Sidewalk Snow Clearing</strong><p>Focused winter care for pedestrian access.</p><em>Learn more →</em></span>
+          </button>
+
+          <button class="service-card" type="button" data-category="commercial winter" data-service="Ice Management" data-kicker="Commercial · Winter" data-image="ice" data-copy="Planned salting and sanding focused on changing conditions, safer access and continued property operations." data-list="Parking-lot de-icing|Salting and sanding|Weather-based monitoring|Application documentation">
+            <span class="service-card__image image--ice"></span>
+            <span class="service-card__icon">●</span>
+            <span class="service-card__body"><small>Commercial · Winter</small><strong>Ice Management</strong><p>Responsive treatment for changing conditions.</p><em>Learn more →</em></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="estimate-section" id="contact" aria-labelledby="estimateTitle">
+      <div class="estimate-section__media">
+        <div class="estimate-section__copy">
+          <p class="eyebrow">Request an estimate</p>
+          <h2 id="estimateTitle">Tell us about your property.</h2>
+          <p>Share the basics. We’ll review the request and follow up with the right next step for the property and service.</p>
+          <div class="estimate-section__notes">
+            <span>✓ Commercial and residential requests</span>
+            <span>✓ Summer, winter and project work</span>
+            <span>✓ Clear follow-up and defined scope</span>
+          </div>
+        </div>
+      </div>
+      <div class="estimate-section__form-wrap">
+        <form class="estimate-form" id="inlineEstimateForm">
+          <div class="estimate-form__heading">
+            <strong>Start your request</strong>
+            <span>Prototype form — nothing is sent or saved.</span>
+          </div>
+          <div class="form-grid">
+            <label><span>Name *</span><input name="name" required autocomplete="name"></label>
+            <label><span>Company</span><input name="company" autocomplete="organization"></label>
+            <label><span>Phone *</span><input name="phone" type="tel" required autocomplete="tel"></label>
+            <label><span>Email *</span><input name="email" type="email" required autocomplete="email"></label>
+            <label><span>Property type</span><select name="propertyType"><option>Commercial</option><option>Multi-residential</option><option>Institutional</option><option>Residential</option></select></label>
+            <label><span>Service needed</span><select name="service"><option>Landscape & property care</option><option>Snow & ice management</option><option>Project or installation</option></select></label>
+            <label class="form-grid__full"><span>Property details</span><textarea name="details" rows="4" placeholder="Address, scope, timing or anything else that would help."></textarea></label>
+          </div>
+          <div class="estimate-form__footer">
+            <button class="button button--yellow" type="submit">Preview submission <span>→</span></button>
+            <small>We’ll connect this to your real workflow when the website is built.</small>
+          </div>
+        </form>
+        <div class="form-success" id="inlineSuccess" hidden>
+          <span>✓</span>
+          <strong>Request preview complete.</strong>
+          <p>On the live website, the request would enter your estimate workflow and the customer would receive confirmation.</p>
+          <button class="button button--black" type="button" data-reset-inline>Start another preview</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="transformation section section--dark" aria-labelledby="transformTitle">
+      <div class="shell transformation__layout">
+        <div class="section-heading section-heading--light transformation__copy">
+          <p class="eyebrow">Before & after</p>
+          <h2 id="transformTitle">Show the transformation.</h2>
+          <p>A draggable comparison gives project work more credibility than a standard photo gallery. Drag the handle to preview the interaction.</p>
+          <div class="transformation__labels"><span>Before</span><span>After</span></div>
+        </div>
+
+        <div class="compare" id="compare" style="--position:52%" aria-label="Interactive before and after comparison">
+          <div class="compare__before"><span>Before</span></div>
+          <div class="compare__after"><span>After</span></div>
+          <div class="compare__line" aria-hidden="true"></div>
+          <button class="compare__handle" id="compareHandle" type="button" aria-label="Drag to compare before and after"><span>↔</span></button>
+          <input id="compareRange" type="range" min="0" max="100" value="52" aria-label="Before and after position">
+        </div>
+      </div>
+    </section>
